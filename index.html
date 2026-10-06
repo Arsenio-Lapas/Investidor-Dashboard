@@ -96,12 +96,26 @@ button:hover{
 }
 
 .topo{
-    background:white;
-    padding:25px;
+    background:linear-gradient(
+    135deg,
+    #1e3a8a,
+    #2563eb
+    );
+
+    color:white;
+    padding:30px;
     border-radius:18px;
     margin-bottom:25px;
+
     box-shadow:
-        0 8px 20px rgba(0,0,0,.05);
+    0 10px 30px rgba(37,99,235,.25);
+}
+.topo h1{
+    color:white;
+}
+
+.topo #dataAtualizacao{
+    color:#dbeafe;
 }
 
 .rodape{
@@ -115,16 +129,22 @@ button:hover{
 
 <body>
 
+<div class="topo">
+
 <h1>📊 Dashboard do Investidor</h1>
 
-<p>
+<p style="margin-top:10px;">
 Última atualização:
-<span id="dataAtualizacao">Ainda não atualizada</span>
+<span id="dataAtualizacao"></span>
 </p>
+
+<br>
 
 <button onclick="atualizar()">
 🔄 Atualizar Dados
 </button>
+
+</div>
 
 <br><br>
 

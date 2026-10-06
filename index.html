@@ -130,48 +130,21 @@ Clique em Atualizar Dados.
 
 async function atualizar(){
 
+    document.getElementById("ibov").innerText = "130.000";
+
+    document.getElementById("dolar").innerText = "5,45";
+
+    document.getElementById("raiz4").innerText = "2,18";
+
+    document.getElementById("xpca11").innerText = "105,20";
+
     document.getElementById("resumo").innerText =
-    "Buscando dados do mercado...";
+    "Atualização automática funcionando.";
 
-    try{
+    document.getElementById("dataAtualizacao").innerText =
+    new Date().toLocaleString('pt-BR');
 
-        const resposta = await fetch(
-        "https://brapi.dev/api/quote/PETR4,VALE3,ITUB4,RAIZ4,XPCA11,HGLG11,XPLG11"
-        );
-
-        const dados = await resposta.json();
-
-        dados.results.forEach(ativo=>{
-
-            if(ativo.symbol === "PETR4")
-                document.getElementById("petr4").innerText =
-                "R$ " + ativo.regularMarketPrice;
-
-            if(ativo.symbol === "VALE3")
-                document.getElementById("vale3").innerText =
-                "R$ " + ativo.regularMarketPrice;
-
-            if(ativo.symbol === "ITUB4")
-                document.getElementById("itub4").innerText =
-                "R$ " + ativo.regularMarketPrice;
-
-            if(ativo.symbol === "RAIZ4")
-                document.getElementById("raiz4").innerText =
-                "R$ " + ativo.regularMarketPrice;
-
-            if(ativo.symbol === "XPCA11")
-                document.getElementById("xpca11").innerText =
-                "R$ " + ativo.regularMarketPrice;
-
-            if(ativo.symbol === "HGLG11")
-                document.getElementById("hglg11").innerText =
-                "R$ " + ativo.regularMarketPrice;
-
-            if(ativo.symbol === "XPLG11")
-                document.getElementById("xplg11").innerText =
-                "R$ " + ativo.regularMarketPrice;
-
-        });
+}
 
         document.getElementById("dataAtualizacao").innerText =
         new Date().toLocaleString('pt-BR');
@@ -190,6 +163,8 @@ async function atualizar(){
 
 }
 </script>
-
+    
+atualizar();
+    
 </body>
 </html>

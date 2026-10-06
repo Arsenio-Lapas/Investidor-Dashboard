@@ -199,7 +199,7 @@ Clique em Atualizar Dados.
 
 <script>
  
-function atualizar(){
+async function atualizar(){
  
 document.getElementById("dataAtualizacao").innerText =
 new Date().toLocaleString('pt-BR');
@@ -211,11 +211,29 @@ document.getElementById("ibov").innerText = "130.000";
  
 document.getElementById("ifix").innerText = "3.400";
  
-document.getElementById("dolar").innerText = "5,45";
- 
-document.getElementById("euro").innerText = "6,20";
- 
-document.getElementById("btc").innerText = "650.000";
+try {
+
+    const resposta = await fetch(
+        "https://economia.awesomeapi.com.br/json/last/USD-BRL,EUR-BRL,BTC-BRL"
+    );
+
+    const dados = await resposta.json();
+
+    document.getElementById("dolar").innerText =
+        Number(dados.USDBRL.bid).toFixed(2);
+
+    document.getElementById("euro").innerText =
+        Number(dados.EURBRL.bid).toFixed(2);
+
+    document.getElementById("btc").innerText =
+        Number(dados.BTCBRL.bid).toLocaleString('pt-BR');
+
+}
+catch (erro) {
+
+    console.log("Erro ao consultar API", erro);
+
+}
  
 document.getElementById("raiz4").innerText = "2,18";
  

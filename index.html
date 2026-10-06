@@ -235,47 +235,19 @@ catch (erro) {
 
 }
  
-try {
+document.getElementById("raiz4").innerText = "2,18";
 
-    const respostaAcoes = await fetch(
-        "https://brapi.dev/api/quote/RAIZ4,PETR4,VALE3,ITUB4,XPCA11,HGLG11,XPLG11"
-    );
+document.getElementById("petr4").innerText = "38,50";
 
-    const mercado = await respostaAcoes.json();
+document.getElementById("vale3").innerText = "57,80";
 
-    mercado.results.forEach(ativo => {
+document.getElementById("itub4").innerText = "41,30";
 
-        const preco = ativo.regularMarketPrice;
+document.getElementById("xpca11").innerText = "105,20";
 
-        if (ativo.symbol === "RAIZ4")
-            document.getElementById("raiz4").innerText = preco;
+document.getElementById("hglg11").innerText = "160,00";
 
-        if (ativo.symbol === "PETR4")
-            document.getElementById("petr4").innerText = preco;
-
-        if (ativo.symbol === "VALE3")
-            document.getElementById("vale3").innerText = preco;
-
-        if (ativo.symbol === "ITUB4")
-            document.getElementById("itub4").innerText = preco;
-
-        if (ativo.symbol === "XPCA11")
-            document.getElementById("xpca11").innerText = preco;
-
-        if (ativo.symbol === "HGLG11")
-            document.getElementById("hglg11").innerText = preco;
-
-        if (ativo.symbol === "XPLG11")
-            document.getElementById("xplg11").innerText = preco;
-
-    });
-
-}
-catch (erro) {
-
-    console.log("Erro ao consultar ações e FIIs", erro);
-
-}
+document.getElementById("xplg11").innerText = "101,50";
  
 }
  

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dashboard do Investidor</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f4f6f9;
+    margin:20px;
+    color:#333;
+}
+
+h1{
+    color:#1f2937;
+}
+
+.card{
+    background:#fff;
+    border-radius:10px;
+    padding:15px;
+    margin-bottom:15px;
+    box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+
+button{
+    background:#2563eb;
+    border:none;
+    color:white;
+    padding:10px 20px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#1d4ed8;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:15px;
+}
+
+.item{
+    padding:8px 0;
+    border-bottom:1px solid #eee;
+}
+
+.positivo{
+    color:green;
+    font-weight:bold;
+}
+
+.negativo{
+    color:red;
+    font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<h1>📊 Dashboard do Investidor</h1>
+
+<p>
+Última atualização:
+<span id="dataAtualizacao">Ainda não atualizada</span>
+</p>
+
+<button onclick="atualizar()">
+🔄 Atualizar Dados
+</button>
+
+<br><br>
+
+<div class="grid">
+
+<div class="card">
+<h3>🌎 Índices</h3>
+
+<div class="item">IBOVESPA: <span id="ibov">--</span></div>
+<div class="item">IFIX: <span id="ifix">--</span></div>
+<div class="item">S&P 500: <span id="sp500">--</span></div>
+
+</div>
+
+<div class="card">
+<h3>💱 Moedas</h3>
+
+<div class="item">Dólar: <span id="dolar">--</span></div>
+<div class="item">Euro: <span id="euro">--</span></div>
+<div class="item">Bitcoin: <span id="btc">--</span></div>
+
+</div>
+
+<div class="card">
+<h3>📈 Ações</h3>
+
+<div class="item">RAIZ4: <span id="raiz4">--</span></div>
+<div class="item">PETR4: <span id="petr4">--</span></div>
+<div class="item">VALE3: <span id="vale3">--</span></div>
+<div class="item">ITUB4: <span id="itub4">--</span></div>
+
+</div>
+
+<div class="card">
+<h3>🏢 FIIs</h3>
+
+<div class="item">XPCA11: <span id="xpca11">--</span></div>
+<div class="item">HGLG11: <span id="hglg11">--</span></div>
+<div class="item">XPLG11: <span id="xplg11">--</span></div>
+
+</div>
+
+</div>
+
+<div class="card">
+<h3>📰 Resumo do Mercado</h3>
+
+<p id="resumo">
+Clique em Atualizar Dados.
+</p>
+</div>
+
+<script>
+
+async function atualizar(){
+
+    document.getElementById("resumo").innerText =
+    "Buscando dados do mercado...";
+
+    try{
+
+        const resposta = await fetch(
+        "https://brapi.dev/api/quote/PETR4,VALE3,ITUB4,RAIZ4,XPCA11,HGLG11,XPLG11"
+        );
+
+        const dados = await resposta.json();
+
+        dados.results.forEach(ativo=>{
+
+            if(ativo.symbol === "PETR4")
+                document.getElementById("petr4").innerText =
+                "R$ " + ativo.regularMarketPrice;
+
+            if(ativo.symbol === "VALE3")
+                document.getElementById("vale3").innerText =
+                "R$ " + ativo.regularMarketPrice;
+
+            if(ativo.symbol === "ITUB4")
+                document.getElementById("itub4").innerText =
+                "R$ " + ativo.regularMarketPrice;
+
+            if(ativo.symbol === "RAIZ4")
+                document.getElementById("raiz4").innerText =
+                "R$ " + ativo.regularMarketPrice;
+
+            if(ativo.symbol === "XPCA11")
+                document.getElementById("xpca11").innerText =
+                "R$ " + ativo.regularMarketPrice;
+
+            if(ativo.symbol === "HGLG11")
+                document.getElementById("hglg11").innerText =
+                "R$ " + ativo.regularMarketPrice;
+
+            if(ativo.symbol === "XPLG11")
+                document.getElementById("xplg11").innerText =
+                "R$ " + ativo.regularMarketPrice;
+
+        });
+
+        document.getElementById("dataAtualizacao").innerText =
+        new Date().toLocaleString('pt-BR');
+
+        document.getElementById("resumo").innerText =
+        "Dados atualizados com sucesso.";
+
+    }
+    catch(erro){
+
+        document.getElementById("resumo").innerText =
+        "Erro ao atualizar os dados.";
+
+        console.error(erro);
+    }
+
+}
+</script>
+
+</body>
+</html>

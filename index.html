@@ -127,35 +127,43 @@ Clique em Atualizar Dados.
 </div>
 
 <script>
-
-async function atualizar(){
-
-    document.getElementById("ibov").innerText = "130.000";
-    document.getElementById("ifix").innerText = "3.400";
-
-    document.getElementById("dolar").innerText = "5,45";
-    document.getElementById("euro").innerText = "6,20";
-    document.getElementById("btc").innerText = "650.000";
-
-    document.getElementById("raiz4").innerText = "2,18";
-    document.getElementById("petr4").innerText = "38,50";
-    document.getElementById("vale3").innerText = "57,80";
-    document.getElementById("itub4").innerText = "41,30";
-
-    document.getElementById("xpca11").innerText = "105,20";
-    document.getElementById("hglg11").innerText = "160,00";
-    document.getElementById("xplg11").innerText = "101,50";
-
-    document.getElementById("resumo").innerText =
-    "Dashboard carregado automaticamente.";
-
-    document.getElementById("dataAtualizacao").innerText =
-    new Date().toLocaleString('pt-BR');
-
+ 
+function atualizar(){
+ 
+document.getElementById("dataAtualizacao").innerText =
+new Date().toLocaleString('pt-BR');
+ 
+document.getElementById("resumo").innerText =
+"Dashboard carregado automaticamente.";
+ 
+document.getElementById("ibov").innerText = "130.000";
+ 
+document.getElementById("ifix").innerText = "3.400";
+ 
+document.getElementById("dolar").innerText = "5,45";
+ 
+document.getElementById("euro").innerText = "6,20";
+ 
+document.getElementById("btc").innerText = "650.000";
+ 
+document.getElementById("raiz4").innerText = "2,18";
+ 
+document.getElementById("petr4").innerText = "38,50";
+ 
+document.getElementById("vale3").innerText = "57,80";
+ 
+document.getElementById("itub4").innerText = "41,30";
+ 
+document.getElementById("xpca11").innerText = "105,20";
+ 
+document.getElementById("hglg11").innerText = "160,00";
+ 
+document.getElementById("xplg11").innerText = "101,50";
+ 
 }
-
-atualizar();
-
+ 
+window.onload = atualizar;
+ 
 </script>
        
 </body>

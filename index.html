@@ -274,6 +274,7 @@ async function carregarAcao(ticker, id) {
   return ativo;
 }
 
+
 async function carregarAcoes() {
   const ativos = [
     ["PETR4", "petr4"],
@@ -281,18 +282,39 @@ async function carregarAcoes() {
     ["ITUB4", "itub4"]
   ];
 
-  const resultados = await Promise.allSettled(
-    ativos.map(([ticker, id]) => carregarAcao(ticker, id))
+  let ok = 0;
+  const falhas = [];
+
+  for (const [ticker, id] of ativos) {
+    try {
+      if (ok > 0 || falhas.length > 0) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+
+      await carregarAcao(ticker, id);
+      ok++;
+
+    } catch (erro) {
+      console.warn("Falha na cotação " + ticker, erro);
+      falhas.push(ticker);
+
+      mostrar(id, erro.message.includes("429")
+        ? "Limite da API"
+        : "Indisponível");
+    }
+  }
+
+  mostrar(
+    "statusAcoes",
+    ok + " de " + ativos.length +
+    " ações consultadas." +
+    (falhas.length
+      ? " Falhas: " + falhas.join(", ") + "."
+      : "")
   );
 
-  let ok = 0;
-
-  resultados.forEach((resultado, i) => {
-    if (resultado.status === "fulfilled") {
-      ok++;
-    } else {
-      console.warn("Falha na cotação", ativos[i][0], resultado.reason);
-    }
+  return ok;
+}
   });
 
   mostrar("statusAcoes",

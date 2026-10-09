@@ -1,259 +1,470 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Dashboard do Investidor</title>
 
 <style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+:root {
+  --blue: #2563eb;
+  --bg: #f1f5f9;
+  --text: #172033;
+  --muted: #64748b;
+  --green: #15803d;
+  --red: #dc2626;
 }
-
-body{
-    font-family:'Segoe UI',Arial,sans-serif;
-    background:#f3f6fa;
-    color:#1f2937;
-    padding:25px;
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 24px;
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
 }
-
-h1{
-    font-size:42px;
-    margin-bottom:10px;
-    color:#0f172a;
+.container { max-width: 1400px; margin: auto; }
+header {
+  background: linear-gradient(135deg,#172554,#2563eb);
+  color: white;
+  padding: 28px;
+  border-radius: 18px;
+  margin-bottom: 24px;
 }
-
-#dataAtualizacao{
-    font-weight:bold;
-    color:#2563eb;
+header h1 { margin: 0 0 12px; font-size: 30px; }
+header p { margin: 8px 0; }
+button {
+  background: white;
+  color: #1d4ed8;
+  border: 0;
+  border-radius: 9px;
+  padding: 12px 18px;
+  font-weight: bold;
+  cursor: pointer;
 }
-
-button{
-    background:#2563eb;
-    color:#fff;
-    border:none;
-    padding:12px 25px;
-    border-radius:10px;
-    cursor:pointer;
-    font-size:15px;
-    transition:0.3s;
+button:disabled { opacity: .6; cursor: wait; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
+  gap: 18px;
+  margin-bottom: 20px;
 }
-
-button:hover{
-    background:#1d4ed8;
+.card {
+  background: white;
+  padding: 22px;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px #0f172a0a;
+  min-width: 0;
 }
-
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
-    gap:20px;
-    margin-top:20px;
+.card h2 { font-size: 18px; margin: 0 0 16px; }
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e2e8f0;
 }
-
-.card{
-    background:white;
-    border-radius:16px;
-    padding:22px;
-    box-shadow:
-        0 8px 20px rgba(0,0,0,.05);
+.item:last-child { border-bottom: 0; }
+.item span:last-child { text-align: right; }
+.value { font-weight: bold; }
+.positive { color: var(--green); }
+.negative { color: var(--red); }
+.muted { color: var(--muted); }
+.summary {
+  line-height: 1.8;
+  white-space: normal;
 }
-
-.card h3{
-    margin-bottom:20px;
-    color:#111827;
+.news-item {
+  padding: 14px 0;
+  border-bottom: 1px solid #e2e8f0;
 }
-
-.item{
-    display:flex;
-    justify-content:space-between;
-    padding:12px 0;
-    border-bottom:1px solid #e5e7eb;
+.news-item:last-child { border-bottom: 0; }
+.news-item a {
+  color: #1d4ed8;
+  text-decoration: none;
+  font-weight: bold;
 }
-
-.item:last-child{
-    border-bottom:none;
+.news-item a:hover { text-decoration: underline; }
+.news-item small {
+  display: block;
+  color: var(--muted);
+  margin-top: 7px;
 }
-
-.valor{
-    font-weight:bold;
+footer {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 20px 0;
 }
-
-.positivo{
-    color:#16a34a;
+@media(max-width:600px) {
+  body { padding: 12px; }
+  header { padding: 20px; }
+  header h1 { font-size: 24px; }
+  .card { padding: 17px; }
 }
-
-.negativo{
-    color:#dc2626;
-}
-
-#resumo{
-    font-size:16px;
-    line-height:1.6;
-}
-
-.topo{
-    background:linear-gradient(
-    135deg,
-    #1e3a8a,
-    #2563eb
-    );
-
-    color:white;
-    padding:30px;
-    border-radius:18px;
-    margin-bottom:25px;
-
-    box-shadow:
-    0 10px 30px rgba(37,99,235,.25);
-}
-.topo h1{
-    color:white;
-}
-
-.topo #dataAtualizacao{
-    color:#dbeafe;
-}
-
-.rodape{
-    margin-top:25px;
-    color:#6b7280;
-    font-size:13px;
-}
-
 </style>
 </head>
 
 <body>
+<div class="container">
 
-<div class="topo">
-
-<h1>📊 Dashboard do Investidor</h1>
-
-<p style="margin-top:10px;">
-Última atualização:
-<span id="dataAtualizacao"></span>
-</p>
-
-<br>
-
-<button onclick="atualizar()">
-🔄 Atualizar Dados
-</button>
-
-</div>
-
-<br><br>
+<header>
+  <h1>📊 Dashboard do Investidor</h1>
+  <p>Visão executiva do mercado financeiro</p>
+  <p>Última atualização: <strong id="dataAtualizacao">Aguardando...</strong></p>
+  <button id="btnAtualizar" onclick="atualizar()">
+    🔄 Atualizar dados
+  </button>
+</header>
 
 <div class="grid">
 
-<div class="card">
-<h3>🌎 Índices</h3>
+  <section class="card">
+    <h2>💱 Moedas e criptoativos</h2>
+    <div class="item"><span>Dólar</span><span class="value" id="dolar">--</span></div>
+    <div class="item"><span>Euro</span><span class="value" id="euro">--</span></div>
+    <div class="item"><span>Bitcoin</span><span class="value" id="btc">--</span></div>
+  </section>
 
-<div class="item">IBOVESPA: <span id="ibov">132.500</span>
-<div class="item">IFIX: <span id="ifix">--</span></div>
-<div class="item">S&P 500: <span id="sp500">--</span></div>
+  <section class="card">
+    <h2>🌎 Índices de mercado</h2>
+    <div class="item"><span>IBOVESPA</span><span class="value" id="ibov">--</span></div>
+    <div class="item"><span>IFIX</span><span class="value" id="ifix">--</span></div>
+    <div class="item"><span>S&P 500</span><span class="value" id="sp500">--</span></div>
+    <p class="muted" id="statusIndices">Fonte ainda não validada.</p>
+  </section>
 
-</div>
+  <section class="card">
+    <h2>📈 Ações</h2>
+    <div class="item"><span>RAIZ4</span><span class="value" id="raiz4">--</span></div>
+    <div class="item"><span>PETR4</span><span class="value" id="petr4">--</span></div>
+    <div class="item"><span>VALE3</span><span class="value" id="vale3">--</span></div>
+    <div class="item"><span>ITUB4</span><span class="value" id="itub4">--</span></div>
+    <p class="muted" id="statusAcoes">Aguardando consulta.</p>
+  </section>
 
-<div class="card">
-<h3>💱 Moedas</h3>
-
-<div class="item">Dólar: <span id="dolar">--</span></div>
-<div class="item">Euro: <span id="euro">--</span></div>
-<div class="item">Bitcoin: <span id="btc">--</span></div>
-
-</div>
-
-<div class="card">
-<h3>📈 Ações</h3>
-
-<div class="item">RAIZ4: <span id="raiz4">--</span></div>
-<div class="item">PETR4: <span id="petr4">--</span></div>
-<div class="item">VALE3: <span id="vale3">--</span></div>
-<div class="item">ITUB4: <span id="itub4">--</span></div>
-
-</div>
-
-<div class="card">
-<h3>🏢 FIIs</h3>
-
-<div class="item">XPCA11: <span id="xpca11">--</span></div>
-<div class="item">HGLG11: <span id="hglg11">--</span></div>
-<div class="item">XPLG11: <span id="xplg11">--</span></div>
+  <section class="card">
+    <h2>🏢 Fundos imobiliários</h2>
+    <div class="item"><span>XPCA11</span><span class="value" id="xpca11">--</span></div>
+    <div class="item"><span>HGLG11</span><span class="value" id="hglg11">--</span></div>
+    <div class="item"><span>XPLG11</span><span class="value" id="xplg11">--</span></div>
+    <p class="muted" id="statusFiis">Fonte ainda não validada.</p>
+  </section>
 
 </div>
 
-</div>
+<section class="card" style="margin-bottom:20px">
+  <h2>📊 Resumo executivo</h2>
+  <div id="resumo" class="summary">
+    Consultando os dados disponíveis...
+  </div>
+</section>
 
-<div class="card">
-<h3>📰 Resumo do Mercado</h3>
+<section class="card">
+  <h2>📰 Notícias de mercado e economia</h2>
+  <div id="noticias">Carregando notícias...</div>
+  <p class="muted">
+    Notícias fornecidas pelo Google News. Consulte a matéria original
+    para verificar o contexto.
+  </p>
+</section>
 
-<p id="resumo">
-Clique em Atualizar Dados.
-</p>
+<footer>
+  Dados sujeitos a atrasos, limites e indisponibilidade das fontes.
+  Este painel é informativo e não constitui recomendação de investimento.
+</footer>
+
 </div>
 
 <script>
- 
-async function atualizar(){
- 
-document.getElementById("dataAtualizacao").innerText =
-new Date().toLocaleString('pt-BR');
- 
-document.getElementById("resumo").innerText =
-"Dashboard carregado automaticamente.";
- 
-document.getElementById("ibov").innerText = "130.000";
- 
-document.getElementById("ifix").innerText = "3.400";
- 
-try {
+const $ = id => document.getElementById(id);
 
-    const resposta = await fetch(
-        "https://economia.awesomeapi.com.br/json/last/USD-BRL,EUR-BRL,BTC-BRL"
+const brl = valor => Number(valor).toLocaleString("pt-BR", {
+  style: "currency",
+  currency: "BRL"
+});
+
+const numero = valor => Number(valor).toLocaleString("pt-BR", {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+});
+
+function mostrar(id, valor) {
+  $(id).textContent = valor;
+}
+
+function estadoVariacao(id, variacao) {
+  const el = $(id);
+  el.classList.remove("positive", "negative");
+
+  if (!Number.isFinite(Number(variacao))) return;
+
+  if (Number(variacao) > 0) el.classList.add("positive");
+  if (Number(variacao) < 0) el.classList.add("negative");
+}
+
+async function consultarJSON(url) {
+  const resposta = await fetch(url);
+  if (!resposta.ok) {
+    throw new Error("HTTP " + resposta.status);
+  }
+  return resposta.json();
+}
+
+async function carregarMoedas() {
+  const dados = await consultarJSON(
+    "https://economia.awesomeapi.com.br/json/last/USD-BRL,EUR-BRL,BTC-BRL"
+  );
+
+  const ativos = [
+    ["dolar", dados.USDBRL, 2],
+    ["euro", dados.EURBRL, 2],
+    ["btc", dados.BTCBRL, 2]
+  ];
+
+  for (const [id, ativo, casas] of ativos) {
+    if (!ativo || !Number.isFinite(Number(ativo.bid))) {
+      throw new Error("Cotação indisponível: " + id);
+    }
+
+    const valor = Number(ativo.bid);
+    mostrar(id, id === "btc"
+      ? brl(valor)
+      : "R$ " + valor.toLocaleString("pt-BR", {
+          minimumFractionDigits: casas,
+          maximumFractionDigits: casas
+        }));
+
+    if (ativo.pctChange !== undefined) {
+      const variacao = Number(ativo.pctChange);
+      estadoVariacao(id, variacao);
+    }
+  }
+
+  return {
+    dolar: Number(dados.USDBRL.bid),
+    euro: Number(dados.EURBRL.bid),
+    btc: Number(dados.BTCBRL.bid)
+  };
+}
+
+async function carregarAcao(ticker, id) {
+  // Consulta cada ticker separadamente porque o acesso gratuito
+  // sem token é limitado a determinados ativos.
+  const dados = await consultarJSON(
+    "https://brapi.dev/api/quote/" + encodeURIComponent(ticker)
+  );
+
+  const ativo = dados.results && dados.results[0];
+
+  if (!ativo || !Number.isFinite(Number(ativo.regularMarketPrice))) {
+    throw new Error("Cotação indisponível para " + ticker);
+  }
+
+  mostrar(id, brl(ativo.regularMarketPrice));
+
+  if (ativo.regularMarketChangePercent !== undefined) {
+    const variacao = Number(ativo.regularMarketChangePercent);
+    estadoVariacao(id, variacao);
+    mostrar(id, brl(ativo.regularMarketPrice) + " (" +
+      (variacao > 0 ? "+" : "") +
+      numero(variacao) + "%)");
+  }
+
+  return ativo;
+}
+
+async function carregarAcoes() {
+  const ativos = [
+    ["PETR4", "petr4"],
+    ["VALE3", "vale3"],
+    ["ITUB4", "itub4"]
+  ];
+
+  const resultados = await Promise.allSettled(
+    ativos.map(([ticker, id]) => carregarAcao(ticker, id))
+  );
+
+  let ok = 0;
+
+  resultados.forEach((resultado, i) => {
+    if (resultado.status === "fulfilled") {
+      ok++;
+    } else {
+      console.warn("Falha na cotação", ativos[i][0], resultado.reason);
+    }
+  });
+
+  mostrar("statusAcoes",
+    ok + " de " + ativos.length +
+    " ações consultadas. RAIZ4 depende de uma fonte compatível."
+  );
+
+  return ok;
+}
+
+async function carregarNoticias() {
+  const area = $("noticias");
+  area.textContent = "Consultando notícias...";
+
+  const rss =
+    "https://news.google.com/rss/search?q=economia+mercado+financeiro+Brasil&hl=pt-BR&gl=BR&ceid=BR:pt-419";
+
+  // Intermediário público: não é parte do GitHub Pages e pode
+  // impor limites ou ficar indisponível.
+  const url =
+    "https://api.allorigins.win/raw?url=" + encodeURIComponent(rss);
+
+  try {
+    const xml = await consultarTexto(url);
+    const documento = new DOMParser().parseFromString(
+      xml, "text/xml"
     );
 
-    const dados = await resposta.json();
+    if (documento.querySelector("parsererror")) {
+      throw new Error("RSS inválido");
+    }
 
-    document.getElementById("dolar").innerText =
-        Number(dados.USDBRL.bid).toFixed(2);
+    const itens = Array.from(
+      documento.querySelectorAll("item")
+    ).slice(0, 8);
 
-    document.getElementById("euro").innerText =
-        Number(dados.EURBRL.bid).toFixed(2);
+    if (!itens.length) {
+      throw new Error("Nenhuma notícia encontrada");
+    }
 
-    document.getElementById("btc").innerText =
-        Number(dados.BTCBRL.bid).toLocaleString('pt-BR');
+    area.replaceChildren();
 
+    itens.forEach(item => {
+      const titulo = item.querySelector("title")?.textContent || "Notícia";
+      const link = item.querySelector("link")?.textContent || "";
+      const data = item.querySelector("pubDate")?.textContent || "";
+
+      const artigo = document.createElement("div");
+      artigo.className = "news-item";
+
+      const a = document.createElement("a");
+      a.textContent = titulo;
+      a.href = link;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+
+      artigo.appendChild(a);
+
+      if (data) {
+        const pequeno = document.createElement("small");
+        const dataObj = new Date(data);
+        pequeno.textContent = Number.isNaN(dataObj.getTime())
+          ? data
+          : dataObj.toLocaleString("pt-BR");
+        artigo.appendChild(pequeno);
+      }
+
+      area.appendChild(artigo);
+    });
+  } catch (erro) {
+    console.warn("Não foi possível carregar notícias:", erro);
+    area.textContent =
+      "Não foi possível carregar as notícias agora. " +
+      "Tente novamente mais tarde ou consulte " +
+      "https://news.google.com/";
+  }
 }
-catch (erro) {
 
-    console.log("Erro ao consultar API", erro);
-
+async function consultarTexto(url) {
+  const resposta = await fetch(url);
+  if (!resposta.ok) {
+    throw new Error("HTTP " + resposta.status);
+  }
+  return resposta.text();
 }
- 
-document.getElementById("raiz4").innerText = "2,18";
 
-document.getElementById("petr4").innerText = "38,50";
+function gerarResumo(moedas, acoesConsultadas) {
+  const linhas = [];
 
-document.getElementById("vale3").innerText = "57,80";
+  linhas.push("As cotações abaixo foram recebidas das fontes consultadas.");
+  linhas.push("");
+  linhas.push("Dólar: " +
+    (moedas ? brl(moedas.dolar) : "indisponível"));
+  linhas.push("Euro: " +
+    (moedas ? brl(moedas.euro) : "indisponível"));
+  linhas.push("Bitcoin: " +
+    (moedas ? brl(moedas.btc) : "indisponível"));
+  linhas.push("");
+  linhas.push("Ações consultadas com sucesso: " +
+    acoesConsultadas + " de 3.");
 
-document.getElementById("itub4").innerText = "41,30";
+  linhas.push("");
+  linhas.push(
+    "IBOVESPA, IFIX, S&P 500, RAIZ4 e os FIIs permanecem " +
+    "sem cotação automática validada nesta versão."
+  );
 
-document.getElementById("xpca11").innerText = "105,20";
-
-document.getElementById("hglg11").innerText = "160,00";
-
-document.getElementById("xplg11").innerText = "101,50";
- 
+  $("resumo").textContent = linhas.join("\n");
 }
- 
-window.onload = atualizar;
- 
+
+async function atualizar() {
+  const botao = $("btnAtualizar");
+  botao.disabled = true;
+  botao.textContent = "Atualizando...";
+
+  mostrar("dataAtualizacao", "Consultando fontes...");
+
+  let moedas = null;
+  let acoes = 0;
+
+  try {
+    const resultadoMoedas = await Promise.allSettled([
+      carregarMoedas(),
+      carregarAcoes()
+    ]);
+
+    if (resultadoMoedas[0].status === "fulfilled") {
+      moedas = resultadoMoedas[0].value;
+    } else {
+      console.error("Erro nas moedas:", resultadoMoedas[0].reason);
+      mostrar("dolar", "Indisponível");
+      mostrar("euro", "Indisponível");
+      mostrar("btc", "Indisponível");
+    }
+
+    if (resultadoMoedas[1].status === "fulfilled") {
+      acoes = resultadoMoedas[1].value;
+    }
+
+    gerarResumo(moedas, acoes);
+
+    mostrar("statusIndices",
+      "Cotações automáticas ainda não habilitadas.");
+    mostrar("statusFiis",
+      "Cotações automáticas ainda não habilitadas.");
+
+    mostrar("raiz4", "Fonte não validada");
+    mostrar("xpca11", "Fonte não validada");
+    mostrar("hglg11", "Fonte não validada");
+    mostrar("xplg11", "Fonte não validada");
+    mostrar("ibov", "Fonte não validada");
+    mostrar("ifix", "Fonte não validada");
+    mostrar("sp500", "Fonte não validada");
+
+    mostrar("dataAtualizacao",
+      new Date().toLocaleString("pt-BR"));
+
+  } catch (erro) {
+    console.error("Erro na atualização:", erro);
+    mostrar("resumo",
+      "Não foi possível concluir a atualização. Tente novamente.");
+  } finally {
+    botao.disabled = false;
+    botao.textContent = "🔄 Atualizar dados";
+  }
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  atualizar();
+  carregarNoticias();
+});
 </script>
-       
+
 </body>
 </html>

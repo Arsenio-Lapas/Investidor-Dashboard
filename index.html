@@ -315,16 +315,7 @@ async function carregarAcoes() {
 
   return ok;
 }
-  });
-
-  mostrar("statusAcoes",
-    ok + " de " + ativos.length +
-    " ações consultadas. RAIZ4 depende de uma fonte compatível."
-  );
-
-  return ok;
-}
-
+ 
 async function carregarNoticias() {
   const area = $("noticias");
   area.textContent = "Consultando notícias...";

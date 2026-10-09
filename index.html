@@ -316,6 +316,70 @@ async function carregarAcoes() {
   return ok;
 }
  
+
+async function carregarFiis() {
+  const tickers = [
+    ["XPCA11", "xpca11"],
+    ["HGLG11", "hglg11"],
+    ["XPLG11", "xplg11"]
+  ];
+
+  try {
+    const dados = await consultarJSON(
+      "https://capitalagora.com.br/api/fiis?limite=200"
+    );
+
+    if (!dados || !Array.isArray(dados.itens)) {
+      throw new Error("Formato de resposta inesperado");
+    }
+
+    let ok = 0;
+
+    for (const [ticker, id] of tickers) {
+      const fundo = dados.itens.find(item =>
+        String(item.ticker || "").toUpperCase() === ticker
+      );
+
+      if (!fundo || !Number.isFinite(Number(fundo.fechamento))) {
+        mostrar(id, "Não localizado");
+        estadoVariacao(id, NaN);
+        continue;
+      }
+
+      const preco = brl(fundo.fechamento);
+      const variacao = Number(fundo.variacao_dia);
+      mostrar(id, Number.isFinite(variacao)
+        ? preco + " (" + (variacao > 0 ? "+" : "") + numero(variacao) + "%)"
+        : preco
+      );
+      estadoVariacao(id, variacao);
+      ok++;
+    }
+
+    const pregao = dados.pregao
+      ? new Date(dados.pregao + "T12:00:00").toLocaleDateString("pt-BR")
+      : "data não informada";
+
+    mostrar("statusFiis",
+      "Fonte: Capital Agora · fechamento de " + pregao +
+      " · " + ok + " de " + tickers.length + " fundos localizados."
+    );
+
+    return { ok, pregao: dados.pregao || null };
+  } catch (erro) {
+    console.warn("Falha ao consultar FIIs:", erro);
+    for (const [, id] of tickers) {
+      mostrar(id, "Indisponível");
+      estadoVariacao(id, NaN);
+    }
+    mostrar("statusFiis",
+      "Não foi possível consultar a Capital Agora. " +
+      "Pode haver indisponibilidade ou bloqueio de acesso pelo navegador."
+    );
+    return { ok: 0, pregao: null };
+  }
+}
+
 async function carregarNoticias() {
   const area = $("noticias");
   area.textContent = "Consultando notícias...";
@@ -392,7 +456,7 @@ async function consultarTexto(url) {
   return resposta.text();
 }
 
-function gerarResumo(moedas, acoesConsultadas) {
+function gerarResumo(moedas, acoesConsultadas, fiisConsultados) {
   const linhas = [];
 
   linhas.push("As cotações abaixo foram recebidas das fontes consultadas.");
@@ -409,8 +473,12 @@ function gerarResumo(moedas, acoesConsultadas) {
 
   linhas.push("");
   linhas.push(
-    "IBOVESPA, IFIX, S&P 500, RAIZ4 e os FIIs permanecem " +
-    "sem cotação automática validada nesta versão."
+    "FIIs consultados na Capital Agora: " +
+    fiisConsultados + " de 3 fundos localizados (preços de fechamento)."
+  );
+  linhas.push(
+    "IBOVESPA, IFIX, S&P 500 e RAIZ4 permanecem sem cotação automática " +
+    "validada nesta versão."
   );
 
   $("resumo").textContent = linhas.join("\n");
@@ -425,37 +493,38 @@ async function atualizar() {
 
   let moedas = null;
   let acoes = 0;
+  let fiis = 0;
 
   try {
-    const resultadoMoedas = await Promise.allSettled([
+    const resultados = await Promise.allSettled([
       carregarMoedas(),
-      carregarAcoes()
+      carregarAcoes(),
+      carregarFiis()
     ]);
 
-    if (resultadoMoedas[0].status === "fulfilled") {
-      moedas = resultadoMoedas[0].value;
+    if (resultados[0].status === "fulfilled") {
+      moedas = resultados[0].value;
     } else {
-      console.error("Erro nas moedas:", resultadoMoedas[0].reason);
+      console.error("Erro nas moedas:", resultados[0].reason);
       mostrar("dolar", "Indisponível");
       mostrar("euro", "Indisponível");
       mostrar("btc", "Indisponível");
     }
 
-    if (resultadoMoedas[1].status === "fulfilled") {
-      acoes = resultadoMoedas[1].value;
+    if (resultados[1].status === "fulfilled") {
+      acoes = resultados[1].value;
     }
 
-    gerarResumo(moedas, acoes);
+    if (resultados[2].status === "fulfilled") {
+      fiis = resultados[2].value.ok;
+    }
+
+    gerarResumo(moedas, acoes, fiis);
 
     mostrar("statusIndices",
       "Cotações automáticas ainda não habilitadas.");
-    mostrar("statusFiis",
-      "Cotações automáticas ainda não habilitadas.");
 
     mostrar("raiz4", "Fonte não validada");
-    mostrar("xpca11", "Fonte não validada");
-    mostrar("hglg11", "Fonte não validada");
-    mostrar("xplg11", "Fonte não validada");
     mostrar("ibov", "Fonte não validada");
     mostrar("ifix", "Fonte não validada");
     mostrar("sp500", "Fonte não validada");
